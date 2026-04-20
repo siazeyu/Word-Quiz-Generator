@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { eq, count } from "drizzle-orm";
+import { eq, count, asc } from "drizzle-orm";
 import { db, textbooksTable, unitsTable, wordsTable } from "@workspace/db";
 import {
   CreateTextbookBody,
@@ -13,11 +13,10 @@ import {
   GetStatsSummaryResponse,
 } from "@workspace/api-zod";
 import { sd } from "../lib/serialize";
-
 const router: IRouter = Router();
 
 router.get("/textbooks", async (_req, res): Promise<void> => {
-  const textbooks = await db.select().from(textbooksTable).orderBy(textbooksTable.createdAt);
+  const textbooks = await db.select().from(textbooksTable).orderBy(asc(textbooksTable.orderIndex), asc(textbooksTable.createdAt));
   res.json(ListTextbooksResponse.parse(textbooks.map(sd)));
 });
 
@@ -27,8 +26,19 @@ router.post("/textbooks", async (req, res): Promise<void> => {
     res.status(400).json({ error: parsed.error.message });
     return;
   }
-  const [textbook] = await db.insert(textbooksTable).values(parsed.data).returning();
+  const existing = await db.select().from(textbooksTable).orderBy(asc(textbooksTable.orderIndex), asc(textbooksTable.createdAt));
+  const maxIndex = existing.length > 0 ? Math.max(...existing.map((t) => t.orderIndex)) : -1;
+  const [textbook] = await db.insert(textbooksTable).values({ ...parsed.data, orderIndex: maxIndex + 1 }).returning();
   res.status(201).json(GetTextbookResponse.parse(sd(textbook!)));
+});
+
+router.post("/textbooks/reorder", async (req, res): Promise<void> => {
+  const { items } = req.body as { items?: { id: number; orderIndex: number }[] };
+  if (!Array.isArray(items)) { res.status(400).json({ error: "items required" }); return; }
+  for (const item of items) {
+    await db.update(textbooksTable).set({ orderIndex: item.orderIndex }).where(eq(textbooksTable.id, item.id));
+  }
+  res.json({ ok: true });
 });
 
 router.get("/textbooks/:id", async (req, res): Promise<void> => {

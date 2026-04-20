@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   useListTextbooks,
@@ -25,6 +25,14 @@ import { useToast } from "@/hooks/use-toast";
 import * as XLSX from "xlsx";
 
 type WordRow = { english: string; chinese: string; phonetic?: string; partOfSpeech?: string; orderIndex: number };
+
+async function reorderApi(endpoint: string, items: { id: number; orderIndex: number }[]) {
+  await fetch(`/api/${endpoint}/reorder`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ items }),
+  });
+}
 
 export default function HomePage() {
   const { toast } = useToast();
@@ -119,10 +127,33 @@ export default function HomePage() {
     );
   }
 
+  const handleMoveTextbook = useCallback(
+    async (idx: number, dir: -1 | 1) => {
+      const target = idx + dir;
+      if (target < 0 || target >= textbooks.length) return;
+      const a = textbooks[idx]!;
+      const b = textbooks[target]!;
+      const newItems = textbooks.map((t, i) => ({
+        id: t.id,
+        orderIndex: i === idx ? b.orderIndex : i === target ? a.orderIndex : t.orderIndex,
+      }));
+      await reorderApi("textbooks", [
+        { id: a.id, orderIndex: b.orderIndex },
+        { id: b.id, orderIndex: a.orderIndex },
+      ]);
+      queryClient.setQueryData(getListTextbooksQueryKey(), () =>
+        [...textbooks].map((t, i) => (i === idx ? { ...t, orderIndex: b.orderIndex } : i === target ? { ...t, orderIndex: a.orderIndex } : t))
+          .sort((x, y) => x.orderIndex - y.orderIndex || x.id - y.id),
+      );
+      void newItems;
+    },
+    [textbooks, queryClient],
+  );
+
   function handleAddUnit() {
     if (!newUnitName.trim() || !selectedTextbookId) return;
     createUnit.mutate(
-      { textbookId: selectedTextbookId, data: { name: newUnitName.trim(), orderIndex: units.length + 1 } },
+      { textbookId: selectedTextbookId, data: { name: newUnitName.trim(), orderIndex: units.length } },
       {
         onSuccess: () => {
           setNewUnitName("");
@@ -161,6 +192,26 @@ export default function HomePage() {
     );
   }
 
+  const handleMoveUnit = useCallback(
+    async (idx: number, dir: -1 | 1) => {
+      const target = idx + dir;
+      if (target < 0 || target >= units.length) return;
+      const a = units[idx]!;
+      const b = units[target]!;
+      await reorderApi("units", [
+        { id: a.id, orderIndex: b.orderIndex },
+        { id: b.id, orderIndex: a.orderIndex },
+      ]);
+      if (selectedTextbookId) {
+        queryClient.setQueryData(getListUnitsQueryKey(selectedTextbookId), () =>
+          [...units].map((u, i) => (i === idx ? { ...u, orderIndex: b.orderIndex } : i === target ? { ...u, orderIndex: a.orderIndex } : u))
+            .sort((x, y) => x.orderIndex - y.orderIndex || x.id - y.id),
+        );
+      }
+    },
+    [units, selectedTextbookId, queryClient],
+  );
+
   function handleAddWord() {
     if (!wordForm.english.trim() || !wordForm.chinese.trim() || !selectedUnitId) return;
     createWord.mutate(
@@ -171,7 +222,7 @@ export default function HomePage() {
           chinese: wordForm.chinese.trim(),
           phonetic: wordForm.phonetic.trim() || null,
           partOfSpeech: wordForm.partOfSpeech.trim() || null,
-          orderIndex: words.length + 1,
+          orderIndex: words.length,
         },
       },
       {
@@ -218,6 +269,26 @@ export default function HomePage() {
     );
   }
 
+  const handleMoveWord = useCallback(
+    async (idx: number, dir: -1 | 1) => {
+      const target = idx + dir;
+      if (target < 0 || target >= words.length) return;
+      const a = words[idx]!;
+      const b = words[target]!;
+      await reorderApi("words", [
+        { id: a.id, orderIndex: b.orderIndex },
+        { id: b.id, orderIndex: a.orderIndex },
+      ]);
+      if (selectedUnitId) {
+        queryClient.setQueryData(getListWordsQueryKey(selectedUnitId), () =>
+          [...words].map((w, i) => (i === idx ? { ...w, orderIndex: b.orderIndex } : i === target ? { ...w, orderIndex: a.orderIndex } : w))
+            .sort((x, y) => x.orderIndex - y.orderIndex || x.id - y.id),
+        );
+      }
+    },
+    [words, selectedUnitId, queryClient],
+  );
+
   function handleExportExcel() {
     if (!selectedUnitId) return;
     const unit = units.find((u) => u.id === selectedUnitId);
@@ -250,7 +321,7 @@ export default function HomePage() {
           chinese: String(r["中文"] ?? "").trim(),
           phonetic: String(r["音标"] ?? "").trim() || undefined,
           partOfSpeech: String(r["词性"] ?? "").trim() || undefined,
-          orderIndex: words.length + i + 1,
+          orderIndex: words.length + i,
         }));
       if (importedWords.length === 0) {
         toast({ title: "未找到有效数据", description: "请确保表头包含：英语、中文、音标、词性", variant: "destructive" });
@@ -293,10 +364,10 @@ export default function HomePage() {
           </div>
         </div>
         <div className="flex-1 overflow-y-auto">
-          {textbooks.map((tb) => (
+          {textbooks.map((tb, idx) => (
             <div
               key={tb.id}
-              className={`group flex items-center px-3 py-2 cursor-pointer text-sm border-b border-sidebar-border/50 transition-colors ${
+              className={`group flex items-center px-2 py-2 cursor-pointer text-sm border-b border-sidebar-border/50 transition-colors ${
                 selectedTextbookId === tb.id ? "bg-primary/10 text-primary font-medium" : "hover:bg-sidebar-accent"
               }`}
               onClick={() => {
@@ -304,6 +375,21 @@ export default function HomePage() {
                 setSelectedUnitId(null);
               }}
             >
+              {/* Sort arrows */}
+              <div className="flex flex-col mr-1 opacity-0 group-hover:opacity-100 shrink-0">
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleMoveTextbook(idx, -1); }}
+                  disabled={idx === 0}
+                  className="text-muted-foreground hover:text-foreground disabled:opacity-20 leading-none text-[10px]"
+                  title="上移"
+                >▲</button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleMoveTextbook(idx, 1); }}
+                  disabled={idx === textbooks.length - 1}
+                  className="text-muted-foreground hover:text-foreground disabled:opacity-20 leading-none text-[10px]"
+                  title="下移"
+                >▼</button>
+              </div>
               {editingTextbook?.id === tb.id ? (
                 <input
                   className="flex-1 text-xs border border-input rounded px-1 py-0.5 bg-card focus:outline-none"
@@ -315,29 +401,19 @@ export default function HomePage() {
                   onClick={(e) => e.stopPropagation()}
                 />
               ) : (
-                <span className="flex-1 truncate">{tb.name}</span>
+                <span className="flex-1 truncate text-xs">{tb.name}</span>
               )}
               <div className="hidden group-hover:flex gap-1 ml-1">
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setEditingTextbook(tb);
-                  }}
+                  onClick={(e) => { e.stopPropagation(); setEditingTextbook(tb); }}
                   className="text-muted-foreground hover:text-foreground text-xs"
                   title="编辑"
-                >
-                  ✎
-                </button>
+                >✎</button>
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteTextbook(tb.id);
-                  }}
+                  onClick={(e) => { e.stopPropagation(); handleDeleteTextbook(tb.id); }}
                   className="text-muted-foreground hover:text-destructive text-xs"
                   title="删除"
-                >
-                  ✕
-                </button>
+                >✕</button>
               </div>
             </div>
           ))}
@@ -381,14 +457,29 @@ export default function HomePage() {
           )}
         </div>
         <div className="flex-1 overflow-y-auto">
-          {units.map((unit) => (
+          {units.map((unit, idx) => (
             <div
               key={unit.id}
-              className={`group flex items-center px-3 py-2 cursor-pointer text-sm border-b border-border/50 transition-colors ${
+              className={`group flex items-center px-2 py-2 cursor-pointer text-sm border-b border-border/50 transition-colors ${
                 selectedUnitId === unit.id ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted/50"
               }`}
               onClick={() => setSelectedUnitId(unit.id)}
             >
+              {/* Sort arrows */}
+              <div className="flex flex-col mr-1 opacity-0 group-hover:opacity-100 shrink-0">
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleMoveUnit(idx, -1); }}
+                  disabled={idx === 0}
+                  className="text-muted-foreground hover:text-foreground disabled:opacity-20 leading-none text-[10px]"
+                  title="上移"
+                >▲</button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); handleMoveUnit(idx, 1); }}
+                  disabled={idx === units.length - 1}
+                  className="text-muted-foreground hover:text-foreground disabled:opacity-20 leading-none text-[10px]"
+                  title="下移"
+                >▼</button>
+              </div>
               {editingUnit?.id === unit.id ? (
                 <input
                   className="flex-1 text-xs border border-input rounded px-1 py-0.5 bg-background focus:outline-none"
@@ -404,23 +495,13 @@ export default function HomePage() {
               )}
               <div className="hidden group-hover:flex gap-1 ml-1">
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setEditingUnit(unit);
-                  }}
+                  onClick={(e) => { e.stopPropagation(); setEditingUnit(unit); }}
                   className="text-muted-foreground hover:text-foreground text-xs"
-                >
-                  ✎
-                </button>
+                >✎</button>
                 <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteUnit(unit.id);
-                  }}
+                  onClick={(e) => { e.stopPropagation(); handleDeleteUnit(unit.id); }}
                   className="text-muted-foreground hover:text-destructive text-xs"
-                >
-                  ✕
-                </button>
+                >✕</button>
               </div>
             </div>
           ))}
@@ -532,6 +613,7 @@ export default function HomePage() {
               <table className="w-full text-sm border-collapse">
                 <thead className="no-print sticky top-0 bg-card border-b border-border">
                   <tr>
+                    <th className="text-left px-2 py-2 text-xs font-semibold text-muted-foreground w-12">排序</th>
                     <th className="text-left px-4 py-2 text-xs font-semibold text-muted-foreground w-8">#</th>
                     <th className="text-left px-4 py-2 text-xs font-semibold text-muted-foreground">英语</th>
                     <th className="text-left px-4 py-2 text-xs font-semibold text-muted-foreground">中文</th>
@@ -543,6 +625,23 @@ export default function HomePage() {
                 <tbody>
                   {words.map((word, idx) => (
                     <tr key={word.id} className="border-b border-border/50 hover:bg-muted/30 group">
+                      {/* Sort arrows */}
+                      <td className="px-2 py-2">
+                        <div className="flex flex-col opacity-0 group-hover:opacity-100">
+                          <button
+                            onClick={() => handleMoveWord(idx, -1)}
+                            disabled={idx === 0}
+                            className="text-muted-foreground hover:text-foreground disabled:opacity-20 leading-none text-[10px]"
+                            title="上移"
+                          >▲</button>
+                          <button
+                            onClick={() => handleMoveWord(idx, 1)}
+                            disabled={idx === words.length - 1}
+                            className="text-muted-foreground hover:text-foreground disabled:opacity-20 leading-none text-[10px]"
+                            title="下移"
+                          >▼</button>
+                        </div>
+                      </td>
                       <td className="px-4 py-2 text-muted-foreground text-xs">{idx + 1}</td>
                       {editingWord?.id === word.id ? (
                         <>
@@ -574,17 +673,17 @@ export default function HomePage() {
                               onChange={(e) => setEditingWord({ ...editingWord, partOfSpeech: e.target.value })}
                             />
                           </td>
-                          <td className="no-print px-4 py-1.5">
+                          <td className="px-4 py-1.5">
                             <div className="flex gap-1">
                               <button
                                 onClick={() => handleUpdateWord(editingWord)}
-                                className="text-xs px-2 py-1 bg-primary text-primary-foreground rounded"
+                                className="px-2 py-1 bg-primary text-primary-foreground rounded text-xs hover:opacity-90"
                               >
                                 保存
                               </button>
                               <button
                                 onClick={() => setEditingWord(null)}
-                                className="text-xs px-2 py-1 border border-border rounded"
+                                className="px-2 py-1 border border-border rounded text-xs hover:bg-muted"
                               >
                                 取消
                               </button>
@@ -594,20 +693,20 @@ export default function HomePage() {
                       ) : (
                         <>
                           <td className="px-4 py-2 font-medium">{word.english}</td>
-                          <td className="px-4 py-2 text-foreground">{word.chinese}</td>
-                          <td className="px-4 py-2 text-muted-foreground font-mono text-xs">{word.phonetic}</td>
-                          <td className="px-4 py-2 text-muted-foreground text-xs">{word.partOfSpeech}</td>
+                          <td className="px-4 py-2 text-muted-foreground">{word.chinese}</td>
+                          <td className="px-4 py-2 text-muted-foreground font-mono text-xs">{word.phonetic ?? ""}</td>
+                          <td className="px-4 py-2 text-muted-foreground text-xs italic">{word.partOfSpeech ?? ""}</td>
                           <td className="no-print px-4 py-2">
                             <div className="hidden group-hover:flex gap-1">
                               <button
                                 onClick={() => setEditingWord(word)}
-                                className="text-xs px-2 py-1 border border-border rounded hover:bg-muted"
+                                className="px-2 py-1 text-xs border border-border rounded hover:bg-muted"
                               >
                                 编辑
                               </button>
                               <button
                                 onClick={() => handleDeleteWord(word.id)}
-                                className="text-xs px-2 py-1 border border-destructive/30 text-destructive rounded hover:bg-destructive/10"
+                                className="px-2 py-1 text-xs border border-destructive/30 text-destructive rounded hover:bg-destructive/10"
                               >
                                 删除
                               </button>
@@ -617,23 +716,21 @@ export default function HomePage() {
                       )}
                     </tr>
                   ))}
-                  {words.length === 0 && (
-                    <tr>
-                      <td colSpan={6} className="text-center py-12 text-muted-foreground text-sm">
-                        此单元暂无单词，点击"添加单词"或导入Excel开始添加
-                      </td>
-                    </tr>
-                  )}
                 </tbody>
               </table>
+              {words.length === 0 && (
+                <div className="text-center py-12 text-muted-foreground text-sm">
+                  暂无单词，点击"+ 添加单词"或导入Excel
+                </div>
+              )}
             </div>
           </>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-center p-8">
-            <div>
-              <div className="text-4xl mb-4">📚</div>
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="text-5xl mb-4">📚</div>
               <h2 className="text-lg font-semibold text-foreground mb-2">选择单元开始管理单词</h2>
-              <p className="text-sm text-muted-foreground max-w-xs">
+              <p className="text-sm text-muted-foreground max-w-sm">
                 从左侧选择教材和单元，或新建教材和单元来管理你的单词列表。
               </p>
             </div>
