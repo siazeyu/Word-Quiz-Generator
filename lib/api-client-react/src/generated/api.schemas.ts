@@ -14,6 +14,7 @@ export interface Textbook {
   name: string;
   /** @nullable */
   description: string | null;
+  orderIndex: number;
   createdAt: string;
   updatedAt: string;
 }

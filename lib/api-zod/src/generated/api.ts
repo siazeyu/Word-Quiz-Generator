@@ -21,6 +21,7 @@ export const ListTextbooksResponseItem = zod.object({
   id: zod.number(),
   name: zod.string(),
   description: zod.string().nullable(),
+  orderIndex: zod.number(),
   createdAt: zod.string(),
   updatedAt: zod.string(),
 });
@@ -45,6 +46,7 @@ export const GetTextbookResponse = zod.object({
   id: zod.number(),
   name: zod.string(),
   description: zod.string().nullable(),
+  orderIndex: zod.number(),
   createdAt: zod.string(),
   updatedAt: zod.string(),
 });
@@ -65,6 +67,7 @@ export const UpdateTextbookResponse = zod.object({
   id: zod.number(),
   name: zod.string(),
   description: zod.string().nullable(),
+  orderIndex: zod.number(),
   createdAt: zod.string(),
   updatedAt: zod.string(),
 });

@@ -150,7 +150,7 @@ export default function DictationPage() {
           columns,
           showPhonetic,
           title,
-          shuffle: selectMode === "all" ? shuffle : false,
+          shuffle: false,
         }),
       });
       const data = await res.json();
