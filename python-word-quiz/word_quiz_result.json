@@ -1,0 +1,608 @@
+{
+  "direction": "zh_to_en",
+  "generatedAt": "2026-04-20T15:10:36.893242",
+  "items": [
+    {
+      "answer": "gloves",
+      "partOfSpeech": "noun",
+      "phonetic": "/ɡlʌvz/",
+      "prompt": "手套"
+    },
+    {
+      "answer": "necklace",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈnekləs/",
+      "prompt": "项链"
+    },
+    {
+      "answer": "backpack",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈbækpæk/",
+      "prompt": "背包"
+    },
+    {
+      "answer": "xylophone",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈzaɪləfəʊn/",
+      "prompt": "木琴"
+    },
+    {
+      "answer": "shorts",
+      "partOfSpeech": "noun",
+      "phonetic": "/ʃɔːts/",
+      "prompt": "短裤"
+    },
+    {
+      "answer": "sandals",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈsændlz/",
+      "prompt": "凉鞋"
+    },
+    {
+      "answer": "keyboard",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈkiːbɔːd/",
+      "prompt": "键盘"
+    },
+    {
+      "answer": "pants",
+      "partOfSpeech": "noun",
+      "phonetic": "/pænts/",
+      "prompt": "裤子"
+    },
+    {
+      "answer": "yellow",
+      "partOfSpeech": "adjective",
+      "phonetic": "/ˈjeləʊ/",
+      "prompt": "黄色"
+    },
+    {
+      "answer": "purse",
+      "partOfSpeech": "noun",
+      "phonetic": "/pɜːs/",
+      "prompt": "手提包"
+    },
+    {
+      "answer": "phone",
+      "partOfSpeech": "noun",
+      "phonetic": "/fəʊn/",
+      "prompt": "手机"
+    },
+    {
+      "answer": "mouse",
+      "partOfSpeech": "noun",
+      "phonetic": "/maʊs/",
+      "prompt": "鼠标"
+    },
+    {
+      "answer": "printer",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈprɪntə/",
+      "prompt": "打印机"
+    },
+    {
+      "answer": "charger",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈtʃɑːdʒə/",
+      "prompt": "充电器"
+    },
+    {
+      "answer": "speaker",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈspiːkə/",
+      "prompt": "扬声器"
+    },
+    {
+      "answer": "phone",
+      "partOfSpeech": "noun",
+      "phonetic": "/fəʊn/",
+      "prompt": "手机"
+    },
+    {
+      "answer": "lion",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈlaɪən/",
+      "prompt": "狮子"
+    },
+    {
+      "answer": "shirt",
+      "partOfSpeech": "noun",
+      "phonetic": "/ʃɜːt/",
+      "prompt": "衬衫"
+    },
+    {
+      "answer": "hat",
+      "partOfSpeech": "noun",
+      "phonetic": "/hæt/",
+      "prompt": "帽子"
+    },
+    {
+      "answer": "sweater",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈswetə/",
+      "prompt": "毛衣"
+    },
+    {
+      "answer": "camera",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈkæmərə/",
+      "prompt": "相机"
+    },
+    {
+      "answer": "suitcase",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈsuːtkeɪs/",
+      "prompt": "行李箱"
+    },
+    {
+      "answer": "key",
+      "partOfSpeech": "noun",
+      "phonetic": "/kiː/",
+      "prompt": "钥匙"
+    },
+    {
+      "answer": "backpack",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈbækpæk/",
+      "prompt": "背包"
+    },
+    {
+      "answer": "juice",
+      "partOfSpeech": "noun",
+      "phonetic": "/dʒuːs/",
+      "prompt": "果汁"
+    },
+    {
+      "answer": "dress",
+      "partOfSpeech": "noun",
+      "phonetic": "/dres/",
+      "prompt": "连衣裙"
+    },
+    {
+      "answer": "boots",
+      "partOfSpeech": "noun",
+      "phonetic": "/buːts/",
+      "prompt": "靴子"
+    },
+    {
+      "answer": "lock",
+      "partOfSpeech": "noun",
+      "phonetic": "/lɒk/",
+      "prompt": "锁"
+    },
+    {
+      "answer": "t-shirt",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈtiː ʃɜːt/",
+      "prompt": "T恤"
+    },
+    {
+      "answer": "microphone",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈmaɪkrəfəʊn/",
+      "prompt": "麦克风"
+    },
+    {
+      "answer": "watch",
+      "partOfSpeech": "noun",
+      "phonetic": "/wɒtʃ/",
+      "prompt": "手表"
+    },
+    {
+      "answer": "fish",
+      "partOfSpeech": "noun",
+      "phonetic": "/fɪʃ/",
+      "prompt": "鱼"
+    },
+    {
+      "answer": "radio",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈreɪdiəʊ/",
+      "prompt": "收音机"
+    },
+    {
+      "answer": "moon",
+      "partOfSpeech": "noun",
+      "phonetic": "/muːn/",
+      "prompt": "月亮"
+    },
+    {
+      "answer": "dog",
+      "partOfSpeech": "noun",
+      "phonetic": "/dɒɡ/",
+      "prompt": "狗"
+    },
+    {
+      "answer": "monitor",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈmɒnɪtə/",
+      "prompt": "显示器"
+    },
+    {
+      "answer": "television",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˌtelɪˈvɪʒn/",
+      "prompt": "电视"
+    },
+    {
+      "answer": "jeans",
+      "partOfSpeech": "noun",
+      "phonetic": "/dʒiːnz/",
+      "prompt": "牛仔裤"
+    },
+    {
+      "answer": "goat",
+      "partOfSpeech": "noun",
+      "phonetic": "/ɡəʊt/",
+      "prompt": "山羊"
+    },
+    {
+      "answer": "laptop",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈlæptɒp/",
+      "prompt": "笔记本电脑"
+    },
+    {
+      "answer": "glasses",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈɡlɑːsɪz/",
+      "prompt": "眼镜"
+    },
+    {
+      "answer": "belt",
+      "partOfSpeech": "noun",
+      "phonetic": "/belt/",
+      "prompt": "腰带"
+    },
+    {
+      "answer": "watch",
+      "partOfSpeech": "noun",
+      "phonetic": "/wɒtʃ/",
+      "prompt": "手表"
+    },
+    {
+      "answer": "window",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈwɪndəʊ/",
+      "prompt": "窗户"
+    },
+    {
+      "answer": "briefcase",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈbriːfkeɪs/",
+      "prompt": "公文包"
+    },
+    {
+      "answer": "camera",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈkæmərə/",
+      "prompt": "相机"
+    },
+    {
+      "answer": "desk",
+      "partOfSpeech": "noun",
+      "phonetic": "/desk/",
+      "prompt": "书桌"
+    },
+    {
+      "answer": "battery",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈbætri/",
+      "prompt": "电池"
+    },
+    {
+      "answer": "zebra",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈzebrə/",
+      "prompt": "斑马"
+    },
+    {
+      "answer": "cap",
+      "partOfSpeech": "noun",
+      "phonetic": "/kæp/",
+      "prompt": "帽子"
+    },
+    {
+      "answer": "book",
+      "partOfSpeech": "noun",
+      "phonetic": "/bʊk/",
+      "prompt": "书"
+    },
+    {
+      "answer": "chair",
+      "partOfSpeech": "noun",
+      "phonetic": "/tʃeə/",
+      "prompt": "椅子"
+    },
+    {
+      "answer": "table",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈteɪbl/",
+      "prompt": "桌子"
+    },
+    {
+      "answer": "eraser",
+      "partOfSpeech": "noun",
+      "phonetic": "/ɪˈreɪzə/",
+      "prompt": "橡皮"
+    },
+    {
+      "answer": "tree",
+      "partOfSpeech": "noun",
+      "phonetic": "/triː/",
+      "prompt": "树"
+    },
+    {
+      "answer": "door",
+      "partOfSpeech": "noun",
+      "phonetic": "/dɔː/",
+      "prompt": "门"
+    },
+    {
+      "answer": "sun",
+      "partOfSpeech": "noun",
+      "phonetic": "/sʌn/",
+      "prompt": "太阳"
+    },
+    {
+      "answer": "tie",
+      "partOfSpeech": "noun",
+      "phonetic": "/taɪ/",
+      "prompt": "领带"
+    },
+    {
+      "answer": "rabbit",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈræbɪt/",
+      "prompt": "兔子"
+    },
+    {
+      "answer": "bracelet",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈbreɪslət/",
+      "prompt": "手镯"
+    },
+    {
+      "answer": "sunglasses",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈsʌnɡlɑːsɪz/",
+      "prompt": "太阳镜"
+    },
+    {
+      "answer": "cable",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈkeɪbl/",
+      "prompt": "电缆"
+    },
+    {
+      "answer": "queen",
+      "partOfSpeech": "noun",
+      "phonetic": "/kwiːn/",
+      "prompt": "女王"
+    },
+    {
+      "answer": "headphone",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈhedfəʊn/",
+      "prompt": "耳机"
+    },
+    {
+      "answer": "elephant",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈelɪfənt/",
+      "prompt": "大象"
+    },
+    {
+      "answer": "umbrella",
+      "partOfSpeech": "noun",
+      "phonetic": "/ʌmˈbrelə/",
+      "prompt": "雨伞"
+    },
+    {
+      "answer": "orange",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈɒrɪndʒ/",
+      "prompt": "橙子"
+    },
+    {
+      "answer": "pen",
+      "partOfSpeech": "noun",
+      "phonetic": "/pen/",
+      "prompt": "钢笔"
+    },
+    {
+      "answer": "pencil",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈpensl/",
+      "prompt": "铅笔"
+    },
+    {
+      "answer": "wallet",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈwɒlɪt/",
+      "prompt": "钱包"
+    },
+    {
+      "answer": "notebook",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈnəʊtbʊk/",
+      "prompt": "笔记本"
+    },
+    {
+      "answer": "umbrella",
+      "partOfSpeech": "noun",
+      "phonetic": "/ʌmˈbrelə/",
+      "prompt": "雨伞"
+    },
+    {
+      "answer": "cat",
+      "partOfSpeech": "noun",
+      "phonetic": "/kæt/",
+      "prompt": "猫"
+    },
+    {
+      "answer": "tablet",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈtæblət/",
+      "prompt": "平板"
+    },
+    {
+      "answer": "shoes",
+      "partOfSpeech": "noun",
+      "phonetic": "/ʃuːz/",
+      "prompt": "鞋子"
+    },
+    {
+      "answer": "sneakers",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈsniːkəz/",
+      "prompt": "运动鞋"
+    },
+    {
+      "answer": "charger",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈtʃɑːdʒə/",
+      "prompt": "充电器"
+    },
+    {
+      "answer": "kite",
+      "partOfSpeech": "noun",
+      "phonetic": "/kaɪt/",
+      "prompt": "风筝"
+    },
+    {
+      "answer": "socks",
+      "partOfSpeech": "noun",
+      "phonetic": "/sɒks/",
+      "prompt": "袜子"
+    },
+    {
+      "answer": "jacket",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈdʒækɪt/",
+      "prompt": "夹克"
+    },
+    {
+      "answer": "ice",
+      "partOfSpeech": "noun",
+      "phonetic": "/aɪs/",
+      "prompt": "冰"
+    },
+    {
+      "answer": "scanner",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈskænə/",
+      "prompt": "扫描仪"
+    },
+    {
+      "answer": "water",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈwɔːtə/",
+      "prompt": "水"
+    },
+    {
+      "answer": "coat",
+      "partOfSpeech": "noun",
+      "phonetic": "/kəʊt/",
+      "prompt": "外套"
+    },
+    {
+      "answer": "speaker",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈspiːkə/",
+      "prompt": "扬声器"
+    },
+    {
+      "answer": "apple",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈæpl/",
+      "prompt": "苹果"
+    },
+    {
+      "answer": "suit",
+      "partOfSpeech": "noun",
+      "phonetic": "/suːt/",
+      "prompt": "西装"
+    },
+    {
+      "answer": "wallet",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈwɒlɪt/",
+      "prompt": "钱包"
+    },
+    {
+      "answer": "ring",
+      "partOfSpeech": "noun",
+      "phonetic": "/rɪŋ/",
+      "prompt": "戒指"
+    },
+    {
+      "answer": "headphones",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈhedfəʊnz/",
+      "prompt": "耳机"
+    },
+    {
+      "answer": "earrings",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈɪərɪŋz/",
+      "prompt": "耳环"
+    },
+    {
+      "answer": "adapter",
+      "partOfSpeech": "noun",
+      "phonetic": "/əˈdæptə/",
+      "prompt": "适配器"
+    },
+    {
+      "answer": "computer",
+      "partOfSpeech": "noun",
+      "phonetic": "/kəmˈpjuːtə/",
+      "prompt": "电脑"
+    },
+    {
+      "answer": "cable",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˈkeɪbl/",
+      "prompt": "电缆"
+    },
+    {
+      "answer": "house",
+      "partOfSpeech": "noun",
+      "phonetic": "/haʊs/",
+      "prompt": "房子"
+    },
+    {
+      "answer": "clock",
+      "partOfSpeech": "noun",
+      "phonetic": "/klɒk/",
+      "prompt": "时钟"
+    },
+    {
+      "answer": "skirt",
+      "partOfSpeech": "noun",
+      "phonetic": "/skɜːt/",
+      "prompt": "裙子"
+    },
+    {
+      "answer": "violin",
+      "partOfSpeech": "noun",
+      "phonetic": "/ˌvaɪəˈlɪn/",
+      "prompt": "小提琴"
+    },
+    {
+      "answer": "banana",
+      "partOfSpeech": "noun",
+      "phonetic": "/bəˈnɑːnə/",
+      "prompt": "香蕉"
+    },
+    {
+      "answer": "scarf",
+      "partOfSpeech": "noun",
+      "phonetic": "/skɑːf/",
+      "prompt": "围巾"
+    }
+  ],
+  "style": "underline",
+  "title": "100单词测试"
+}

@@ -1,5 +1,7 @@
 import { useState, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 import {
   useListTextbooks,
   useGenerateDictationPreview,
@@ -47,6 +49,7 @@ export default function DictationPage() {
     generatedAt: string;
   } | null>(null);
   const [generating, setGenerating] = useState(false);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
 
   const { data: textbooks = [] } = useListTextbooks();
 
@@ -164,7 +167,287 @@ export default function DictationPage() {
   }
 
   function handlePrint() {
-    window.print();
+    if (!printRef.current || generatingPdf || !sheetData) return;
+    
+    setGeneratingPdf(true);
+    
+    try {
+      // 创建PDF文档
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+        compress: true
+      });
+      
+      // 设置边距
+      const margin = 15;
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const contentWidth = pageWidth - 2 * margin;
+      
+      // 计算当前Y位置
+      let y = margin + 10;
+      
+      // 标题
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.text(sheetData.title, pageWidth / 2, y, { align: 'center' });
+      y += 12;
+      
+      // 副标题
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(102, 102, 102);
+      const directionText = sheetData.direction === "zh_to_en" ? "汉译英" : "英译汉";
+      doc.text(`${directionText}  |  共 ${sheetData.items.length} 题`, pageWidth / 2, y, { align: 'center' });
+      y += 10;
+      
+      // 绘制分割线
+      doc.setLineWidth(0.5);
+      doc.line(margin, y, pageWidth - margin, y);
+      y += 15;
+      
+      // 学生信息行
+      doc.setFontSize(10);
+      doc.setTextColor(0, 0, 0);
+      const infoItems = [
+        { label: '姓名：', width: 100 },
+        { label: '班级：', width: 80 },
+        { label: '日期：', width: 80 },
+        { label: '得分：', width: 60 }
+      ];
+      let infoX = margin;
+      const labelWidth = 30; // 固定标签宽度
+      infoItems.forEach(item => {
+        doc.text(item.label, infoX, y);
+        doc.setLineWidth(0.5);
+        doc.line(infoX + labelWidth, y + 2, infoX + labelWidth + item.width, y + 2);
+        infoX += labelWidth + item.width + 10;
+      });
+      y += 20;
+      
+      // 根据样式类型生成内容
+      if (sheetData.style === "underline") {
+        // 下划线样式
+        const items = sheetData.items;
+        const itemsPerColumn = Math.ceil(items.length / columns);
+        
+        // 按列组织数据
+        const columnsData = [];
+        for (let i = 0; i < columns; i++) {
+          columnsData.push(items.slice(i * itemsPerColumn, (i + 1) * itemsPerColumn));
+        }
+        
+        // 计算列宽
+        const columnWidth = contentWidth / columns;
+        
+        // 逐行绘制
+        for (let row = 0; row < itemsPerColumn; row++) {
+          // 检查是否需要分页
+          if (y > pageHeight - margin - 40) {
+            doc.addPage();
+            y = margin + 10;
+          }
+          
+          // 逐列绘制
+          for (let col = 0; col < columns; col++) {
+            const item = columnsData[col][row];
+            if (!item) continue;
+            
+            const itemNumber = col * itemsPerColumn + row + 1;
+            const x = margin + col * columnWidth;
+            
+            // 绘制单词项
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(102, 102, 102);
+            doc.text(`${itemNumber}.`, x, y);
+            
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(0, 0, 0);
+            doc.text(item.prompt, x + 15, y);
+            
+            // 绘制下划线
+            doc.setLineWidth(0.5);
+            doc.line(x + 15 + 60, y + 2, x + columnWidth - 5, y + 2);
+            
+            // 绘制音标
+            if (item.phonetic && showPhonetic) {
+              doc.setFontSize(8);
+              doc.setFont('helvetica', 'normal');
+              doc.setTextColor(153, 153, 153);
+              doc.text(item.phonetic, x + 15, y + 8);
+            }
+          }
+          
+          // 行间距
+          y += showPhonetic ? 15 : 12;
+        }
+      } else {
+        // 表格样式
+        const items = sheetData.items;
+        const cols = splitIntoColumns(items, columns);
+        
+        cols.forEach((col, colIdx) => {
+          // 计算列宽
+          const columnWidth = contentWidth / columns;
+          const x = margin + colIdx * columnWidth;
+          
+          // 绘制表头
+          doc.setFontSize(9);
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(0, 0, 0);
+          doc.setFillColor(245, 245, 245);
+          
+          // 表头高度
+          const headerHeight = 12;
+          
+          // 绘制表头单元格
+          let headerX = x;
+          const序号Width = 22;
+          const promptWidth = showPhonetic && columns === 1 ? columnWidth - 序号Width - 90 - 100 : columnWidth - 序号Width - 100;
+          const phoneticWidth = showPhonetic && columns === 1 ? 90 : 0;
+          const answerWidth = 100;
+          
+          // 序号列
+          doc.rect(headerX, y, 序号Width, headerHeight, 'F');
+          doc.text('序', headerX + 序号Width / 2, y + headerHeight / 2, { align: 'center' });
+          headerX += 序号Width;
+          
+          // 提示词列
+          doc.rect(headerX, y, promptWidth, headerHeight, 'F');
+          doc.text(sheetData.direction === "zh_to_en" ? "中文" : "英文", headerX + promptWidth / 2, y + headerHeight / 2, { align: 'center' });
+          headerX += promptWidth;
+          
+          // 音标列
+          if (showPhonetic && columns === 1) {
+            doc.rect(headerX, y, phoneticWidth, headerHeight, 'F');
+            doc.text('音标', headerX + phoneticWidth / 2, y + headerHeight / 2, { align: 'center' });
+            headerX += phoneticWidth;
+          }
+          
+          // 答案列
+          doc.rect(headerX, y, answerWidth, headerHeight, 'F');
+          doc.text('答案（默写）', headerX + answerWidth / 2, y + headerHeight / 2, { align: 'center' });
+          
+          y += headerHeight;
+          
+          // 绘制表格内容
+          doc.setFontSize(9);
+          doc.setFont('helvetica', 'normal');
+          const rowHeight = 14;
+          
+          col.forEach((item, i) => {
+            // 检查是否需要分页
+            if (y + rowHeight > pageHeight - margin - 40) {
+              doc.addPage();
+              y = margin + 10;
+              
+              // 重新绘制表头
+              doc.setFontSize(9);
+              doc.setFont('helvetica', 'bold');
+              doc.setFillColor(245, 245, 245);
+              
+              let headerX = x;
+              
+              // 序号列
+              doc.rect(headerX, y, 序号Width, headerHeight, 'F');
+              doc.text('序', headerX + 序号Width / 2, y + headerHeight / 2, { align: 'center' });
+              headerX += 序号Width;
+              
+              // 提示词列
+              doc.rect(headerX, y, promptWidth, headerHeight, 'F');
+              doc.text(sheetData.direction === "zh_to_en" ? "中文" : "英文", headerX + promptWidth / 2, y + headerHeight / 2, { align: 'center' });
+              headerX += promptWidth;
+              
+              // 音标列
+              if (showPhonetic && columns === 1) {
+                doc.rect(headerX, y, phoneticWidth, headerHeight, 'F');
+                doc.text('音标', headerX + phoneticWidth / 2, y + headerHeight / 2, { align: 'center' });
+                headerX += phoneticWidth;
+              }
+              
+              // 答案列
+              doc.rect(headerX, y, answerWidth, headerHeight, 'F');
+              doc.text('答案（默写）', headerX + answerWidth / 2, y + headerHeight / 2, { align: 'center' });
+              
+              y += headerHeight;
+              
+              doc.setFontSize(9);
+              doc.setFont('helvetica', 'normal');
+            }
+            
+            // 计算行号
+            const offset = colIdx * Math.ceil(items.length / columns);
+            const rowNumber = offset + i + 1;
+            
+            // 设置行背景色
+            if (i % 2 === 1) {
+              doc.setFillColor(250, 250, 250);
+              doc.rect(x, y, columnWidth, rowHeight, 'F');
+            }
+            
+            // 绘制单元格边框
+            doc.setLineWidth(0.5);
+            doc.rect(x, y, columnWidth, rowHeight);
+            
+            // 绘制内容
+            let cellX = x;
+            
+            // 序号
+            doc.setTextColor(102, 102, 102);
+            doc.text(rowNumber.toString(), cellX + 序号Width / 2, y + rowHeight / 2, { align: 'center' });
+            cellX += 序号Width;
+            
+            // 提示词
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'bold');
+            doc.text(item.prompt, cellX + 5, y + rowHeight / 2, { align: 'left' });
+            
+            // 词性
+            if (item.partOfSpeech && columns === 1) {
+              doc.setFontSize(7);
+              doc.setTextColor(136, 136, 136);
+              doc.setFont('helvetica', 'italic');
+              doc.text(item.partOfSpeech, cellX + 5 + 60, y + rowHeight / 2, { align: 'left' });
+              doc.setFontSize(9);
+              doc.setFont('helvetica', 'bold');
+              doc.setTextColor(0, 0, 0);
+            }
+            cellX += promptWidth;
+            
+            // 音标
+            if (item.phonetic && showPhonetic && columns === 1) {
+              doc.setTextColor(102, 102, 102);
+              doc.setFont('helvetica', 'normal');
+              doc.text(item.phonetic, cellX + 5, y + rowHeight / 2, { align: 'left' });
+              cellX += phoneticWidth;
+            }
+            
+            // 答案列（留空）
+            cellX += answerWidth;
+            
+            y += rowHeight;
+          });
+        });
+      }
+      
+      // 页脚
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(170, 170, 170);
+      const footerText = `单词默写生成器  ·  ${new Date(sheetData.generatedAt).toLocaleDateString("zh-CN")}`;
+      doc.text(footerText, pageWidth - margin, pageHeight - margin, { align: 'right' });
+      
+      // 保存PDF
+      doc.save(`${sheetData.title || 'word-dictation'}.pdf`);
+    } catch (error) {
+      console.error('PDF generation error:', error);
+    } finally {
+      setGeneratingPdf(false);
+    }
   }
 
   // Split items into N columns for rendering
@@ -368,9 +651,10 @@ export default function DictationPage() {
           {sheetData && (
             <button
               onClick={handlePrint}
-              className="w-full py-2.5 border border-border rounded-md text-sm font-medium hover:bg-muted transition-colors"
+              disabled={generatingPdf}
+              className="w-full py-2.5 border border-border rounded-md text-sm font-medium hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              打印 / 导出PDF
+              {generatingPdf ? "生成中..." : "打印 / 导出PDF"}
             </button>
           )}
         </div>
@@ -383,8 +667,8 @@ export default function DictationPage() {
             {/* Screen controls */}
             <div className="no-print flex items-center justify-between mb-4">
               <p className="text-sm text-muted-foreground">预览 — 共 {sheetData.items.length} 题</p>
-              <button onClick={handlePrint} className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm hover:opacity-90">
-                打印 / 导出PDF
+              <button onClick={handlePrint} disabled={generatingPdf} className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed">
+                {generatingPdf ? "生成中..." : "打印 / 导出PDF"}
               </button>
             </div>
 
@@ -502,9 +786,7 @@ export default function DictationPage() {
           body * { visibility: hidden; }
           .print-area, .print-area * { visibility: visible; }
           .print-area {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
+            position: static !important;
             width: 100% !important;
             height: auto !important;
             padding: 0 !important;
@@ -513,6 +795,11 @@ export default function DictationPage() {
             border-radius: 0 !important;
             background: white !important;
             overflow: visible !important;
+          }
+          body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
           }
           @page {
             margin: 15mm;

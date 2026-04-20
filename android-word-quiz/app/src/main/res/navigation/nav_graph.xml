@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.wordquiz.ui.home.HomeFragment"
+        android:label="@string/home"
+        tools:layout="@layout/fragment_home" />
+
+    <fragment
+        android:id="@+id/navigation_textbooks"
+        android:name="com.wordquiz.ui.textbook.TextbookListFragment"
+        android:label="@string/textbooks"
+        tools:layout="@layout/fragment_textbook_list">
+        <action
+            android:id="@+id/action_textbooks_to_units"
+            app:destination="@id/navigation_units" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_units"
+        android:name="com.wordquiz.ui.unit.UnitListFragment"
+        android:label="@string/units"
+        tools:layout="@layout/fragment_unit_list">
+        <argument
+            android:name="textbookId"
+            app:argType="long" />
+        <argument
+            android:name="textbookName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_units_to_words"
+            app:destination="@id/navigation_words" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_words"
+        android:name="com.wordquiz.ui.word.WordListFragment"
+        android:label="@string/words"
+        tools:layout="@layout/fragment_word_list">
+        <argument
+            android:name="unitId"
+            app:argType="long" />
+        <argument
+            android:name="unitName"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_dictation"
+        android:name="com.wordquiz.ui.dictation.DictationFragment"
+        android:label="@string/dictation"
+        tools:layout="@layout/fragment_dictation" />
+
+</navigation>

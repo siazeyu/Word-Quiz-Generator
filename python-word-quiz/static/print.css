@@ -1,0 +1,46 @@
+/* 打印样式 */
+@media print {
+    /* 防止单词项被分页符分割 */
+    .word-item, .word-list, div, section, article, li, tr, td {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+    
+    /* 确保页面边距合适 */
+    @page {
+        margin: 1.5cm;
+    }
+    
+    /* 隐藏不需要打印的元素 */
+    .no-print, .print-hide {
+        display: none !important;
+    }
+    
+    /* 确保内容不会超出页面 */
+    body {
+        width: 100%;
+        max-width: 100%;
+        overflow: visible;
+        font-size: 12pt;
+        line-height: 1.4;
+    }
+    
+    /* 确保表格和列表在打印时正常显示 */
+    table {
+        page-break-inside: avoid;
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    /* 确保每个单词项有足够的空间 */
+    * {
+        box-sizing: border-box;
+    }
+    
+    /* 防止段落被分页符分割 */
+    p {
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin-bottom: 0.5em;
+    }
+}
