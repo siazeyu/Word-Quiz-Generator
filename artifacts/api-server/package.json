@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "export NODE_ENV=development && pnpm run build && pnpm run start",
+    "dev": "set NODE_ENV=development && pnpm run build && pnpm run start",
     "build": "node ./build.mjs",
-    "start": "node --enable-source-maps ./dist/index.mjs",
+    "start": "node --enable-source-maps -r dotenv/config ./dist/index.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
@@ -17,7 +17,8 @@
     "drizzle-orm": "catalog:",
     "express": "^5",
     "pino": "^9",
-    "pino-http": "^10"
+    "pino-http": "^10",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",

@@ -364,7 +364,7 @@ export default function HomePage() {
           </div>
         </div>
         <div className="flex-1 overflow-y-auto">
-          {textbooks.map((tb, idx) => (
+          {Array.isArray(textbooks) && textbooks.map((tb, idx) => (
             <div
               key={tb.id}
               className={`group flex items-center px-2 py-2 cursor-pointer text-sm border-b border-sidebar-border/50 transition-colors ${
@@ -417,7 +417,7 @@ export default function HomePage() {
               </div>
             </div>
           ))}
-          {textbooks.length === 0 && (
+          {Array.isArray(textbooks) && textbooks.length === 0 && (
             <p className="text-xs text-muted-foreground text-center py-4 px-2">添加教材开始使用</p>
           )}
         </div>
@@ -457,7 +457,7 @@ export default function HomePage() {
           )}
         </div>
         <div className="flex-1 overflow-y-auto">
-          {units.map((unit, idx) => (
+          {Array.isArray(units) && units.map((unit, idx) => (
             <div
               key={unit.id}
               className={`group flex items-center px-2 py-2 cursor-pointer text-sm border-b border-border/50 transition-colors ${
@@ -505,7 +505,7 @@ export default function HomePage() {
               </div>
             </div>
           ))}
-          {selectedTextbookId && units.length === 0 && (
+          {selectedTextbookId && Array.isArray(units) && units.length === 0 && (
             <p className="text-xs text-muted-foreground text-center py-4 px-2">添加单元</p>
           )}
         </div>
@@ -518,9 +518,9 @@ export default function HomePage() {
             <div className="no-print px-4 py-3 border-b border-border flex items-center justify-between bg-card">
               <div>
                 <h1 className="font-semibold text-foreground">
-                  {units.find((u) => u.id === selectedUnitId)?.name ?? ""}
+                  {Array.isArray(units) && (units.find((u) => u.id === selectedUnitId)?.name ?? "")}
                 </h1>
-                <p className="text-xs text-muted-foreground mt-0.5">{words.length} 个单词</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{Array.isArray(words) ? words.length : 0} 个单词</p>
               </div>
               <div className="flex gap-2 items-center">
                 <label className="cursor-pointer px-3 py-1.5 text-xs border border-border rounded-md hover:bg-muted transition-colors">
@@ -623,7 +623,7 @@ export default function HomePage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {words.map((word, idx) => (
+                  {Array.isArray(words) && words.map((word, idx) => (
                     <tr key={word.id} className="border-b border-border/50 hover:bg-muted/30 group">
                       {/* Sort arrows */}
                       <td className="px-2 py-2">
@@ -718,7 +718,7 @@ export default function HomePage() {
                   ))}
                 </tbody>
               </table>
-              {words.length === 0 && (
+              {Array.isArray(words) && words.length === 0 && (
                 <div className="text-center py-12 text-muted-foreground text-sm">
                   暂无单词，点击"+ 添加单词"或导入Excel
                 </div>

@@ -251,10 +251,10 @@ export default function DictationPage() {
               选择单元 ({selectedUnitIds.length} 已选)
             </label>
             <div className="border border-border rounded overflow-hidden max-h-52 overflow-y-auto">
-              {textbooks.length === 0 ? (
+              {Array.isArray(textbooks) && textbooks.length === 0 ? (
                 <p className="text-xs text-muted-foreground text-center py-4">暂无教材，请先在单词管理中添加</p>
               ) : (
-                textbooks.map((tb) => {
+                Array.isArray(textbooks) && textbooks.map((tb) => {
                   const tbUnits = getUnitsForTextbook(tb.id);
                   const isExpanded = expandedTextbooks.has(tb.id);
                   return (
