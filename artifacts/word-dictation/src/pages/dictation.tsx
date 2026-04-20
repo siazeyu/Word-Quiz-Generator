@@ -434,16 +434,20 @@ export default function DictationPage() {
       {/* Print-only styles */}
       <style>{`
         @media print {
-          body > * { display: none !important; }
+          body * { visibility: hidden; }
+          .print-area, .print-area * { visibility: visible; }
           .print-area {
-            display: block !important;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 20mm 15mm;
-            box-shadow: none;
-            border-radius: 0;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            background: white !important;
+            overflow: visible !important;
           }
           @page {
             margin: 15mm;
