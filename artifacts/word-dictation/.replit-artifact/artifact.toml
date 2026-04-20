@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "单词默写生成器"
+version = "1.0.0"
+id = "artifacts/word-dictation"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22829
+
+[services.development]
+run = "pnpm --filter @workspace/word-dictation run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/word-dictation", "run", "build" ]
+publicDir = "artifacts/word-dictation/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22829"
+BASE_PATH = "/"

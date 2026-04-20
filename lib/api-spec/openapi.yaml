@@ -1,22 +1,28 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Word Dictation API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: textbooks
+    description: Textbook management
+  - name: units
+    description: Unit management
+  - name: words
+    description: Word management
+  - name: dictation
+    description: Dictation sheet generation
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +30,346 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /textbooks:
+    get:
+      operationId: listTextbooks
+      tags: [textbooks]
+      summary: List all textbooks
+      responses:
+        "200":
+          description: List of textbooks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Textbook"
+    post:
+      operationId: createTextbook
+      tags: [textbooks]
+      summary: Create a textbook
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTextbookBody"
+      responses:
+        "201":
+          description: Created textbook
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Textbook"
+        "400":
+          description: Bad request
+
+  /textbooks/{id}:
+    get:
+      operationId: getTextbook
+      tags: [textbooks]
+      summary: Get a textbook by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: A textbook
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Textbook"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateTextbook
+      tags: [textbooks]
+      summary: Update a textbook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTextbookBody"
+      responses:
+        "200":
+          description: Updated textbook
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Textbook"
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteTextbook
+      tags: [textbooks]
+      summary: Delete a textbook
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /textbooks/{textbookId}/units:
+    get:
+      operationId: listUnits
+      tags: [units]
+      summary: List units for a textbook
+      parameters:
+        - name: textbookId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of units
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Unit"
+    post:
+      operationId: createUnit
+      tags: [units]
+      summary: Create a unit
+      parameters:
+        - name: textbookId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUnitBody"
+      responses:
+        "201":
+          description: Created unit
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Unit"
+        "400":
+          description: Bad request
+
+  /units/{id}:
+    patch:
+      operationId: updateUnit
+      tags: [units]
+      summary: Update a unit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUnitBody"
+      responses:
+        "200":
+          description: Updated unit
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Unit"
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteUnit
+      tags: [units]
+      summary: Delete a unit
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /units/{unitId}/words:
+    get:
+      operationId: listWords
+      tags: [words]
+      summary: List words for a unit
+      parameters:
+        - name: unitId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of words
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Word"
+    post:
+      operationId: createWord
+      tags: [words]
+      summary: Create a word
+      parameters:
+        - name: unitId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWordBody"
+      responses:
+        "201":
+          description: Created word
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Word"
+        "400":
+          description: Bad request
+
+  /words/{id}:
+    patch:
+      operationId: updateWord
+      tags: [words]
+      summary: Update a word
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWordBody"
+      responses:
+        "200":
+          description: Updated word
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Word"
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteWord
+      tags: [words]
+      summary: Delete a word
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /words/import:
+    post:
+      operationId: importWords
+      tags: [words]
+      summary: Import words from Excel data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ImportWordsBody"
+      responses:
+        "200":
+          description: Import result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportResult"
+        "400":
+          description: Bad request
+
+  /units/{unitId}/words/export:
+    get:
+      operationId: exportWords
+      tags: [words]
+      summary: Export words as JSON for Excel download
+      parameters:
+        - name: unitId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Export data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExportData"
+
+  /dictation/preview:
+    post:
+      operationId: generateDictationPreview
+      tags: [dictation]
+      summary: Generate dictation sheet preview data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateDictationBody"
+      responses:
+        "200":
+          description: Dictation sheet data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DictationSheet"
+        "400":
+          description: Bad request
+
+  /stats/summary:
+    get:
+      operationId: getStatsSummary
+      tags: [textbooks]
+      summary: Get overall stats summary
+      responses:
+        "200":
+          description: Stats summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsSummary"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +380,268 @@ components:
       required:
         - status
 
+    Textbook:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - name
+        - description
+        - createdAt
+        - updatedAt
+
+    CreateTextbookBody:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+      required:
+        - name
+
+    UpdateTextbookBody:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+
+    Unit:
+      type: object
+      properties:
+        id:
+          type: integer
+        textbookId:
+          type: integer
+        name:
+          type: string
+        orderIndex:
+          type: integer
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - textbookId
+        - name
+        - orderIndex
+        - createdAt
+        - updatedAt
+
+    CreateUnitBody:
+      type: object
+      properties:
+        name:
+          type: string
+        orderIndex:
+          type: integer
+      required:
+        - name
+        - orderIndex
+
+    UpdateUnitBody:
+      type: object
+      properties:
+        name:
+          type: string
+        orderIndex:
+          type: integer
+
+    Word:
+      type: object
+      properties:
+        id:
+          type: integer
+        unitId:
+          type: integer
+        english:
+          type: string
+        chinese:
+          type: string
+        phonetic:
+          type: ["string", "null"]
+        partOfSpeech:
+          type: ["string", "null"]
+        orderIndex:
+          type: integer
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+      required:
+        - id
+        - unitId
+        - english
+        - chinese
+        - phonetic
+        - partOfSpeech
+        - orderIndex
+        - createdAt
+        - updatedAt
+
+    CreateWordBody:
+      type: object
+      properties:
+        english:
+          type: string
+        chinese:
+          type: string
+        phonetic:
+          type: ["string", "null"]
+        partOfSpeech:
+          type: ["string", "null"]
+        orderIndex:
+          type: integer
+      required:
+        - english
+        - chinese
+        - orderIndex
+
+    UpdateWordBody:
+      type: object
+      properties:
+        english:
+          type: string
+        chinese:
+          type: string
+        phonetic:
+          type: ["string", "null"]
+        partOfSpeech:
+          type: ["string", "null"]
+        orderIndex:
+          type: integer
+
+    ImportWordsBody:
+      type: object
+      properties:
+        unitId:
+          type: integer
+        words:
+          type: array
+          items:
+            $ref: "#/components/schemas/CreateWordBody"
+      required:
+        - unitId
+        - words
+
+    ImportResult:
+      type: object
+      properties:
+        imported:
+          type: integer
+        total:
+          type: integer
+      required:
+        - imported
+        - total
+
+    ExportData:
+      type: object
+      properties:
+        unitName:
+          type: string
+        textbookName:
+          type: string
+        words:
+          type: array
+          items:
+            $ref: "#/components/schemas/Word"
+      required:
+        - unitName
+        - textbookName
+        - words
+
+    GenerateDictationBody:
+      type: object
+      properties:
+        unitIds:
+          type: array
+          items:
+            type: integer
+        direction:
+          type: string
+          enum: [zh_to_en, en_to_zh]
+        style:
+          type: string
+          enum: [underline, table]
+        shuffle:
+          type: boolean
+        showPhonetic:
+          type: boolean
+        title:
+          type: string
+        columns:
+          type: integer
+      required:
+        - unitIds
+        - direction
+        - style
+        - shuffle
+        - showPhonetic
+        - columns
+
+    DictationItem:
+      type: object
+      properties:
+        prompt:
+          type: string
+        answer:
+          type: string
+        phonetic:
+          type: ["string", "null"]
+        partOfSpeech:
+          type: ["string", "null"]
+      required:
+        - prompt
+        - answer
+        - phonetic
+        - partOfSpeech
+
+    DictationSheet:
+      type: object
+      properties:
+        title:
+          type: string
+        direction:
+          type: string
+        style:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/DictationItem"
+        generatedAt:
+          type: string
+      required:
+        - title
+        - direction
+        - style
+        - items
+        - generatedAt
+
+    StatsSummary:
+      type: object
+      properties:
+        totalTextbooks:
+          type: integer
+        totalUnits:
+          type: integer
+        totalWords:
+          type: integer
+      required:
+        - totalTextbooks
+        - totalUnits
+        - totalWords
